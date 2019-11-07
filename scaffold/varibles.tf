@@ -27,6 +27,9 @@ variable "vpc_region" {
     description = "region to host vpc"
 }
 
+variable "vpc_top_cidr" {
+    description = "top level IP range for the VPC"
+}
 variable "vpc_public_subnet_1_cidr" {
     description = "pubic subnet cidr for az1"
 }
@@ -34,4 +37,3 @@ variable "vpc_public_subnet_1_cidr" {
 variable "vpc_private_subnet_1_cidr" {
     description = "private subnet cidr for az1"
 }
-

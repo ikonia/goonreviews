@@ -1,2 +1,3 @@
 # ignore the terraform provider stuff
 .terraform
+.tfstate*

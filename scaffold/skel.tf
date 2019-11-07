@@ -6,7 +6,7 @@ provider "aws" {
 
 # Create a VPC to launch our instances into
 resource "aws_vpc" "generic_vpc" {
-  cidr_block = "10.11.218.0/23"
+  cidr_block = "${var.vpc_top_cidr}"
   instance_tenancy = "default"
   enable_dns_hostnames = true
   enable_dns_support = true
@@ -20,62 +20,67 @@ resource "aws_vpc" "generic_vpc" {
 
   }
 }
+
 # set VPC AWS DHCP server options for host to take an address from
-# resource "aws_vpc_dhcp_options" "prd_hosting_01_dhcp" {
-#  domain_name = "aws.no-dns.co.uk"
-#  domain_name_servers = ["${cidrhost(aws_vpc.prd_hosting_01.cidr_block, 2)}"]
-#    tags {
-#      Name = "hosting_vpc_dhcp"
-#      environment = "production"
-#    }
-#}
+resource "aws_vpc_dhcp_options" "generic_vpc" {
+  domain_name = "aws.no-dns.co.uk"
+  domain_name_servers = ["${cidrhost(aws_vpc.generic_vpc.cidr_block, 2)}"]
+    tags = {
+      Name = "${var.vpc_name}_dhcp_options"
+      environment = "production"
+    }
+}
 
-# define subnets for managmenet VPC 2 x public, 2 x private, spare address in middle
-# Management public AZ1
-# resource "aws_subnet" "prd_hosting_01_public_az1" {
-#  vpc_id = "${aws_vpc.prd_hosting_01.id}"
-#  cidr_block = "10.11.218.0/26"
-#  availability_zone = "us-east-1a"
-#    tags {
-#      Name = "prd_hosting_01_public_az1"
-#      AZ = "az1"
-#    }
-#}
 
-# Management public AZ2
-#resource "aws_subnet" "prd_hosting_02_public_az2" {
-#  vpc_id = "${aws_vpc.prd_hosting_01.id}"
-#  cidr_block = "10.11.218.64/26"
-#  availability_zone = "us-east-1b"
-#    tags {
-#      Name = "prd_hosting_01_public_az2"
-#      AZ = "az2"
-#    }
-#}
+# define subnets for workload VPC 2 x public, 2 x private, spare address in middle workload public AZ1
+resource "aws_subnet" "generic_vpc_public_subnet_az1" {
+  vpc_id = "${aws_vpc.generic_vpc.id}"
+  cidr_block = "10.11.218.0/26"
+  availability_zone = "us-east-1a"
+    tags = {
+      Name = "${var.vpc_name}_public_subnet_az1"
+      environment = "production"
+      AZ = "az1"
+    }
+}
 
-# Management private AZ1
-#resource "aws_subnet" "prd_hosting_01_private_az1" {
-#  vpc_id = "${aws_vpc.prd_hosting_01.id}"
-#  cidr_block = "10.11.218.128/26"
-#  availability_zone = "us-east-1a"
-#    tags {
-#      Name = "prd_hosting_01_private_az1"
-#      AZ = "az1"
-#    }
-#}
+# workloadt public AZ2
+resource "aws_subnet" "generic_vpc_public_subnet_az2" {
+  vpc_id = "${aws_vpc.generic_vpc.id}"
+  cidr_block = "10.11.218.64/26"
+  availability_zone = "us-east-1b"
+    tags = {
+      Name = "${var.vpc_name}_public_subnet_az2"
+      environment = "production"
+      AZ = "az2"
+    }
+}
 
-# Management private AZ2
-#resource "aws_subnet" "prd_hosting_01_private_az2" {
-#  vpc_id = "${aws_vpc.prd_hosting_01.id}"
-#  cidr_block = "10.11.218.192/26"
-#  availability_zone = "us-east-1b"
-#    tags {
-#      Name = "prd_hosting_01_private_az2"
-#      AZ = "az2"
-#    }
-#}
+# workload private AZ1
+resource "aws_subnet" "generic_vpc_private_subnet_az1" {
+  vpc_id = "${aws_vpc.generic_vpc.id}"
+  cidr_block = "10.11.218.128/26"
+  availability_zone = "us-east-1a"
+    tags = {
+      Name = "${var.vpc_name}_private_subnet_az1"
+      environment = "production"
+      AZ = "az1"
+    }
+}
 
-#put an internet gateway on the management VPC
+# workload private AZ2
+resource "aws_subnet" "generic_vpc_private_subnet_az2" {
+  vpc_id = "${aws_vpc.generic_vpc.id}"
+  cidr_block = "10.11.218.192/26"
+  availability_zone = "us-east-1b"
+    tags = {
+      Name = "${var.vpc_name}_private_subnet_az2"
+      environment = "production"
+      AZ = "az2"
+    }
+}
+
+#put an internet gateway on the workload VPC
 #resource "aws_internet_gateway" "prod_hosting_01_igw" {
 #    vpc_id = "${aws_vpc.prd_hosting_01.id}"
 #      tags {
