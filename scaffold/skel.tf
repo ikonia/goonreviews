@@ -81,29 +81,27 @@ resource "aws_subnet" "generic_vpc_private_subnet_az2" {
 }
 
 #put an internet gateway on the workload VPC
-#resource "aws_internet_gateway" "prod_hosting_01_igw" {
-#    vpc_id = "${aws_vpc.prd_hosting_01.id}"
-#      tags {
-#        Name = "prod_hosting_01_igw"
-#        environment = "production"
-#      }
-#}
+resource "aws_internet_gateway" "generic_vpc_igw" {
+    vpc_id = "${aws_vpc.generic_vpc.id}"
+      tags = {
+        Name = "${var.vpc_name}_igw"
+        environment = "production"
+      }
+}
 
 # setup the routes
 
-#resource "aws_route_table" "prd_hosting_01_pub_route" {
-#    vpc_id = "${aws_vpc.prod_hosting_01.id}"
-#
-#    route {
-#        cidr_block = "0.0.0.0/0"
-#        gateway_id = "${aws_internet_gateway.prd_hosting_01_igw.id}"
-#    }
-#
-#    tags {
-#        Name = "prod_hosting_01_pub_route"
-#        environment = "production"
-#    }
-#}
+resource "aws_route_table" "generic_vpc_default_pub_route" {
+    vpc_id = "${aws_vpc.generic_vpc.id}"
+    route {
+        cidr_block = "0.0.0.0/0"
+        gateway_id = "${aws_internet_gateway.generic_vpc_igw.id}"
+    }
+    tags = {
+        Name = "{$var.vpc_name}_pub_route_table"
+        environment = "production"
+    }
+}
 
 #resource "aws_route_table" "prd_hosting_01_pri_route" {
 #    vpc_id = "${aws_vpc.prd_hosting_01.id}"
