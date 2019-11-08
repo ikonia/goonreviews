@@ -29,11 +29,12 @@ variable "vpc_region" {
 
 variable "vpc_top_cidr" {
     description = "top level IP range for the VPC"
+		default = ( "10.11.218.0/23" )
 }
-variable "vpc_public_subnet_1_cidr" {
-    description = "pubic subnet cidr for az1"
-}
-
-variable "vpc_private_subnet_1_cidr" {
-    description = "private subnet cidr for az1"
-}
+#variable "vpc_public_subnet_1_cidr" {
+#    description = "pubic subnet cidr for az1"
+#}
+#
+#variable "vpc_private_subnet_1_cidr" {
+#    description = "private subnet cidr for az1"
+#}
