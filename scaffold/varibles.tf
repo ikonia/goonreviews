@@ -38,3 +38,9 @@ variable "vpc_top_cidr" {
 #variable "vpc_private_subnet_1_cidr" {
 #    description = "private subnet cidr for az1"
 #}
+
+variable "hosting_environment" {
+    description = "name of hosting environment, prod/non-prod/test/etc"
+		default = ( "production" )
+}
+
