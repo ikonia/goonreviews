@@ -15,19 +15,19 @@ resource "aws_vpc" "generic_vpc" {
 
   tags = {
     Name        = "${var.vpc_name}"
-    environment = "production"
+    environment = "${var.hosting_environment}"
 
 
   }
 }
 
 # set VPC AWS DHCP server options for host to take an address from
-resource "aws_vpc_dhcp_options" "generic_vpc" {
+resource "aws_vpc_dhcp_options" "generic_vpc_dhcp" {
   domain_name         = "aws.no-dns.co.uk"
   domain_name_servers = ["${cidrhost(aws_vpc.generic_vpc.cidr_block, 2)}"]
   tags = {
     Name        = "${var.vpc_name}_dhcp_options"
-    environment = "production"
+    environment = "${var.hosting_environment}"
   }
 }
 
@@ -39,7 +39,7 @@ resource "aws_subnet" "generic_vpc_public_subnet_az1" {
   availability_zone = "us-east-1a"
   tags = {
     Name        = "${var.vpc_name}_public_subnet_az1"
-    environment = "production"
+    environment = "${var.hosting_environment}"
     AZ          = "az1"
   }
 }
@@ -51,7 +51,7 @@ resource "aws_subnet" "generic_vpc_public_subnet_az2" {
   availability_zone = "us-east-1b"
   tags = {
     Name        = "${var.vpc_name}_public_subnet_az2"
-    environment = "production"
+    environment = "${var.hosting_environment}"
     AZ          = "az2"
   }
 }
@@ -63,7 +63,7 @@ resource "aws_subnet" "generic_vpc_private_subnet_az1" {
   availability_zone = "us-east-1a"
   tags = {
     Name        = "${var.vpc_name}_private_subnet_az1"
-    environment = "production"
+    environment = "${var.hosting_environment}"
     AZ          = "az1"
   }
 }
@@ -114,7 +114,10 @@ resource "aws_route_table" "generic_vpc_default_pri_route" {
 
 
 
-#resource "aws_route_table_association" "prd_hosting_01_pub_route" {
-#    subnet_id = "${aws_subnet.prd_hosting_01_public_az1.id : aws_subnet.prod_hosting_01_public_az2.id}"
-#    route_table_id = "${aws_route_table.prd_hosting_01_pub_route.id}"
+resource "aws_route_table_association" "generic_vpc_associate_pub_route" {
+    subnet_id = "${aws_subnet.generic_vpc_public_subnet_az1.id} : ${aws_subnet.generic_vpc_public_subnet_az2.id}"
+    route_table_id = "aws_route_table.generic_vpc_default_pub_route.id"
+}
+#    subnet_id = "${aws_subnet.generic_vpc_public_subnet_az1.id : aws_subnet.generic_vpc_public_subnet_az2.id}"
+#    route_table_id = "${aws_route_table.${var.vpc_name}_pub_route_table.id}"
 #}
