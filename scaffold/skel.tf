@@ -35,7 +35,6 @@ resource "aws_vpc" "generic_vpc" {
 # set VPC AWS DHCP server options for host to take an address from
 resource "aws_vpc_dhcp_options" "generic_vpc_dhcp" {
   domain_name         = "aws.no-dns.co.uk"
-  # domain_name_servers = ["${cidrhost(aws_vpc.generic_vpc.cidr_block, 2)}"]
   domain_name_servers = [cidrhost(aws_vpc.generic_vpc.cidr_block, 2)]
   tags = {
     Name        = "${var.vpc_name}_dhcp_options"
