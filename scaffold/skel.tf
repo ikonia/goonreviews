@@ -88,7 +88,7 @@ resource "aws_subnet" "generic_vpc_private_subnet_az2" {
   availability_zone = "${var.aws_region}b"
   tags = {
     Name        = "${var.vpc_name}_private_subnet_az2"
-    environment = "production"
+    environment = var.hosting_environment
     az          = "az2"
     seczone     = "amber"
   }
@@ -145,7 +145,7 @@ resource "aws_internet_gateway" "generic_vpc_igw" {
   vpc_id = aws_vpc.generic_vpc.id
   tags = {
     Name        = "${var.vpc_name}_igw"
-    environment = "production"
+    environment = var.hosting_environment
   }
 }
 
@@ -159,7 +159,7 @@ resource "aws_route_table" "generic_vpc_default_pub_route" {
   }
   tags = {
     Name        = "${var.vpc_name}_pub_route_table"
-    environment = "production"
+    environment = var.hosting_environment
   }
 }
 
@@ -167,7 +167,7 @@ resource "aws_route_table" "generic_vpc_default_pri_route" {
   vpc_id = aws_vpc.generic_vpc.id
   tags = {
     Name        = "${var.vpc_name}_pri_route_table"
-    environment = "production"
+    environment = var.hosting_environment
   }
 }
 
