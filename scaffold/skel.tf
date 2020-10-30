@@ -1,14 +1,14 @@
 terraform {
   required_providers {
     aws = {
-      source = "hashicorp/aws"
+      source   = "hashicorp/aws"
       vversion = "~> 3.0"
     }
   }
 }
 
 provider "aws" {
-  region                  = var.aws_region
+  region = var.aws_region
   # commented while testing using local key file
   #access_key              = var.aws_access_key
   #secret_key              = var.aws_secret_key
@@ -17,6 +17,7 @@ provider "aws" {
 
 # Create a VPC to launch our instances into
 resource "aws_vpc" "generic_vpc" {
+  #resource "aws_vpc" "${var.vpc_name}" {
   cidr_block                       = var.vpc_top_cidr
   instance_tenancy                 = "default"
   enable_dns_hostnames             = true
@@ -27,8 +28,6 @@ resource "aws_vpc" "generic_vpc" {
   tags = {
     Name        = var.vpc_name
     environment = var.hosting_environment
-
-
   }
 }
 
