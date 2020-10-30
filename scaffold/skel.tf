@@ -47,7 +47,7 @@ resource "aws_vpc_dhcp_options" "generic_vpc_dhcp" {
 resource "aws_subnet" "generic_vpc_public_subnet_az1" {
   vpc_id            = aws_vpc.generic_vpc.id
   cidr_block        = "10.11.218.0/26"
-  availability_zone = "us-east-1a"
+  availability_zone = "${var.aws_region}a"
   tags = {
     Name        = "${var.vpc_name}_public_subnet_az1"
     environment = var.hosting_environment
@@ -60,7 +60,7 @@ resource "aws_subnet" "generic_vpc_public_subnet_az1" {
 resource "aws_subnet" "generic_vpc_public_subnet_az2" {
   vpc_id            = aws_vpc.generic_vpc.id
   cidr_block        = "10.11.218.64/26"
-  availability_zone = "us-east-1b"
+  availability_zone = "${var.aws_region}b"
   tags = {
     Name        = "${var.vpc_name}_public_subnet_az2"
     environment = var.hosting_environment
