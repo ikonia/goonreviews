@@ -1,7 +1,17 @@
+terraform {
+  required_providers {
+    aws = {
+      source   = "hashicorp/aws"
+      vversion = "~> 3.0"
+    }
+  }
+}
+
 provider "aws" {
-  region                  = var.aws_region
-  access_key              = var.aws_access_key
-  secret_key              = var.aws_secret_key
+  region = var.aws_region
+  # commented while testing using local key file
+  #access_key              = var.aws_access_key
+  #secret_key              = var.aws_secret_key
   shared_credentials_file = "~/.aws/credentials"
 }
 
@@ -17,15 +27,13 @@ resource "aws_vpc" "generic_vpc" {
   tags = {
     Name        = var.vpc_name
     environment = var.hosting_environment
-
-
   }
 }
 
 # set VPC AWS DHCP server options for host to take an address from
 resource "aws_vpc_dhcp_options" "generic_vpc_dhcp" {
-  domain_name         = "aws.no-dns.co.uk"
-  domain_name_servers = ["${cidrhost(aws_vpc.generic_vpc.cidr_block, 2)}"]
+  domain_name         = "${var.hosting_environment}.aws.no-dns.co.uk"
+  domain_name_servers = [cidrhost(aws_vpc.generic_vpc.cidr_block, 2)]
   tags = {
     Name        = "${var.vpc_name}_dhcp_options"
     environment = var.hosting_environment
@@ -34,10 +42,11 @@ resource "aws_vpc_dhcp_options" "generic_vpc_dhcp" {
 
 
 # define subnets for workload VPC 2 x public, 2 x private, spare address in middle workload public az1
+
 resource "aws_subnet" "generic_vpc_public_subnet_az1" {
   vpc_id            = aws_vpc.generic_vpc.id
   cidr_block        = "10.11.218.0/26"
-  availability_zone = "us-east-1a"
+  availability_zone = "${var.aws_region}a"
   tags = {
     Name        = "${var.vpc_name}_public_subnet_az1"
     environment = var.hosting_environment
@@ -50,7 +59,7 @@ resource "aws_subnet" "generic_vpc_public_subnet_az1" {
 resource "aws_subnet" "generic_vpc_public_subnet_az2" {
   vpc_id            = aws_vpc.generic_vpc.id
   cidr_block        = "10.11.218.64/26"
-  availability_zone = "us-east-1b"
+  availability_zone = "${var.aws_region}b"
   tags = {
     Name        = "${var.vpc_name}_public_subnet_az2"
     environment = var.hosting_environment
@@ -63,7 +72,7 @@ resource "aws_subnet" "generic_vpc_public_subnet_az2" {
 resource "aws_subnet" "generic_vpc_private_subnet_az1" {
   vpc_id            = aws_vpc.generic_vpc.id
   cidr_block        = "10.11.218.128/26"
-  availability_zone = "us-east-1a"
+  availability_zone = "${var.aws_region}a"
   tags = {
     Name        = "${var.vpc_name}_private_subnet_az1"
     environment = var.hosting_environment
@@ -76,21 +85,67 @@ resource "aws_subnet" "generic_vpc_private_subnet_az1" {
 resource "aws_subnet" "generic_vpc_private_subnet_az2" {
   vpc_id            = aws_vpc.generic_vpc.id
   cidr_block        = "10.11.218.192/26"
-  availability_zone = "us-east-1b"
+  availability_zone = "${var.aws_region}b"
   tags = {
     Name        = "${var.vpc_name}_private_subnet_az2"
-    environment = "production"
+    environment = var.hosting_environment
     az          = "az2"
     seczone     = "amber"
   }
 }
+
+# workload data az1
+resource "aws_subnet" "generic_vpc_data_subnet_az1" {
+  vpc_id            = aws_vpc.generic_vpc.id
+  cidr_block        = "10.11.218.128/26"
+  availability_zone = "${var.aws_region}a"
+  tags = {
+    Name        = "${var.vpc_name}_data_subnet_az1"
+    environment = var.hosting_environment
+    az          = "az1"
+    seczone     = "green"
+
+
+# workload data az2
+resource "aws_subnet" "generic_vpc_data_subnet_az2" {
+  vpc_id            = aws_vpc.generic_vpc.id
+  cidr_block        = "10.11.218.128/26"
+  availability_zone = "${var.aws_region}b"
+  tags = {
+    Name        = "${var.vpc_name}_data_subnet_az2"
+    environment = var.hosting_environment
+    az          = "az2"
+    seczone     = "green"
+
+# workload management az1
+resource "aws_subnet" "generic_vpc_data_subnet_az1" {
+  vpc_id            = aws_vpc.generic_vpc.id
+  cidr_block        = "10.11.218.128/26"
+  availability_zone = "${var.aws_region}a"
+  tags = {
+    Name        = "${var.vpc_name}_data_subnet_az1"
+    environment = var.hosting_environment
+    az          = "az1"
+    seczone     = "blue"
+
+# workload management az2
+resource "aws_subnet" "generic_vpc_data_subnet_az2" {
+  vpc_id            = aws_vpc.generic_vpc.id
+  cidr_block        = "10.11.218.128/26"
+  availability_zone = "${var.aws_region}b"
+  tags = {
+    Name        = "${var.vpc_name}_data_subnet_az2"
+    environment = var.hosting_environment
+    az          = "az2"
+    seczone     = "blue"
+
 
 #put an internet gateway on the workload VPC
 resource "aws_internet_gateway" "generic_vpc_igw" {
   vpc_id = aws_vpc.generic_vpc.id
   tags = {
     Name        = "${var.vpc_name}_igw"
-    environment = "production"
+    environment = var.hosting_environment
   }
 }
 
@@ -104,7 +159,7 @@ resource "aws_route_table" "generic_vpc_default_pub_route" {
   }
   tags = {
     Name        = "${var.vpc_name}_pub_route_table"
-    environment = "production"
+    environment = var.hosting_environment
   }
 }
 
@@ -112,7 +167,7 @@ resource "aws_route_table" "generic_vpc_default_pri_route" {
   vpc_id = aws_vpc.generic_vpc.id
   tags = {
     Name        = "${var.vpc_name}_pri_route_table"
-    environment = "production"
+    environment = var.hosting_environment
   }
 }
 
