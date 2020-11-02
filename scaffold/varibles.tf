@@ -16,6 +16,7 @@
 
 variable "aws_region" {
  description = "Region of AWS VPC"
+ default     = "us-east-1"
  }
 
 variable "vpc_name" {
@@ -54,4 +55,3 @@ variable "hosting_environment" {
   description = "name of hosting environment, prod/non-prod/test/etc"
   default     = ("production")
 }
-
