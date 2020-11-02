@@ -55,7 +55,7 @@ resource "aws_subnet" "generic_vpc_public_subnet_az1" {
   }
 }
 
-# workloadt public az2
+# workload public az2
 resource "aws_subnet" "generic_vpc_public_subnet_az2" {
   vpc_id            = aws_vpc.generic_vpc.id
   cidr_block        = "10.11.218.64/26"
@@ -180,7 +180,7 @@ resource "aws_route_table" "generic_vpc_default_pri_route" {
 }
 
 
-# basic route attachement 
+# basic route attachement
 resource "aws_route_table_association" "generic_vpc_associate_pub_route" {
   #subnet_id = "${aws_subnet.generic_vpc_public_subnet_az1.id} : ${aws_subnet.generic_vpc_public_subnet_az2.id}"
   subnet_id      = aws_subnet.generic_vpc_public_subnet_az1.id
