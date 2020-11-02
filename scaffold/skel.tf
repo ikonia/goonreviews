@@ -104,6 +104,8 @@ resource "aws_subnet" "generic_vpc_data_subnet_az1" {
     environment = var.hosting_environment
     az          = "az1"
     seczone     = "green"
+  }
+}
 
 
 # workload data az2
@@ -116,28 +118,34 @@ resource "aws_subnet" "generic_vpc_data_subnet_az2" {
     environment = var.hosting_environment
     az          = "az2"
     seczone     = "green"
+   }
+}
 
 # workload management az1
-resource "aws_subnet" "generic_vpc_data_subnet_az1" {
+resource "aws_subnet" "generic_vpc_mgt_subnet_az1" {
   vpc_id            = aws_vpc.generic_vpc.id
   cidr_block        = "10.11.218.128/26"
   availability_zone = "${var.aws_region}a"
   tags = {
-    Name        = "${var.vpc_name}_data_subnet_az1"
+    Name        = "${var.vpc_name}_mgt_subnet_az1"
     environment = var.hosting_environment
     az          = "az1"
     seczone     = "blue"
+  }
+}
 
 # workload management az2
-resource "aws_subnet" "generic_vpc_data_subnet_az2" {
+resource "aws_subnet" "generic_vpc_mgt_subnet_az2" {
   vpc_id            = aws_vpc.generic_vpc.id
   cidr_block        = "10.11.218.128/26"
   availability_zone = "${var.aws_region}b"
   tags = {
-    Name        = "${var.vpc_name}_data_subnet_az2"
+    Name        = "${var.vpc_name}_mgta_subnet_az2"
     environment = var.hosting_environment
     az          = "az2"
     seczone     = "blue"
+  }
+}
 
 
 #put an internet gateway on the workload VPC
